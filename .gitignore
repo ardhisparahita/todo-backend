@@ -1,13 +1,9 @@
-# Dependencies
 node_modules/
 
-# Build output
 build/
 
-# Bun lock (opsional)
 bun.lock
 
-# npm lock (jika ada)
 package-lock.json
 
 # Environment
