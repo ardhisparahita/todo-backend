@@ -2,8 +2,8 @@ import BaseRoute from "./BaseRouter";
 import AuthController from "../controllers/AuthController";
 import { validateAuth } from "./../middlewares/AuthValidator";
 import CatchAsync from "../utils/CatchAsync";
-import { th } from "zod/v4/locales";
 import passport from "passport";
+import { th } from "zod/v4/locales";
 
 class AuthRoutes extends BaseRoute {
   public routes(): void {
@@ -13,6 +13,8 @@ class AuthRoutes extends BaseRoute {
       CatchAsync(AuthController.register)
     );
     this.router.post("/login", AuthController.login);
+
+    // Login google
     this.router.get(
       "/google",
       passport.authenticate("google", { scope: ["profile", "email"] })
@@ -20,10 +22,12 @@ class AuthRoutes extends BaseRoute {
     this.router.get(
       "/google/callback",
       passport.authenticate("google", {
-        successRedirect: "/api/auth/protected",
-        failureFlash: "/google/failure",
-      })
+        failureRedirect: "/google/failure",
+        session: false,
+      }),
+      CatchAsync(AuthController.loginGoogle)
     );
+    this.router.get("/google/failure", AuthController.loginGoogleFailure);
   }
 }
 

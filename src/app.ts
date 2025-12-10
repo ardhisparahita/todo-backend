@@ -9,6 +9,8 @@ import AuthRoutes from "./routes/AuthRoutes";
 import CategoryRoutes from "./routes/CategoryRoutes";
 import TaskRoutes from "./routes/TaskRoutes";
 import { ZodError } from "zod";
+import passport from "passport";
+import "./config/passport";
 
 class App {
   public app: Application;
@@ -23,6 +25,7 @@ class App {
   protected plugins(): void {
     this.app.use(express.json());
     this.app.use(cors());
+    this.app.use(passport.initialize());
   }
 
   protected routes(): void {

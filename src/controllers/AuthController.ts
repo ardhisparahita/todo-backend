@@ -1,9 +1,12 @@
 import { Request, Response } from "express";
 const db = require("./../db/models");
 import Authentication from "../utils/Authentication";
-import { Op } from "sequelize";
+import { Op, where } from "sequelize";
 import { RegisterUserSchema } from "./../middlewares/AuthValidator";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { authenticate } from "passport";
+import { password } from "bun";
 
 class AuthController {
   register = async (
@@ -62,7 +65,32 @@ class AuthController {
     });
   };
 
-  
+  loginGoogle = async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.redirect("http://localhost:5173/");
+      }
+
+      const user = req.user as any;
+
+      const token = Authentication.generateToken(user.id, user.username);
+
+      // ✅ LANGSUNG REDIRECT KE HOME
+      return res.redirect(`http://localhost:5173/login-success?token=${token}`);
+    } catch (err) {
+      console.error("login google error:", err);
+      return res.redirect("http://localhost:5173/");
+    }
+  };
+
+  loginGoogleFailure = async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    return res.status(401).json({
+      message: "login google failed",
+    });
+  };
 }
 
 export default new AuthController();

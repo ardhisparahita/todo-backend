@@ -22,7 +22,17 @@ module.exports = (sequelize, DataTypes) => {
   User.init({
     username: DataTypes.STRING,
     email: DataTypes.STRING,
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
+    },
+    provider: {
+      type: DataTypes.STRING,
+      defaultValue: "local",
+},
+
   }, {
     sequelize,
     modelName: 'User',   // <- singular
