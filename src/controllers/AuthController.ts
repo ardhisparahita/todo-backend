@@ -64,17 +64,19 @@ class AuthController {
   loginGoogle = async (req: Request, res: Response) => {
     try {
       if (!req.user) {
-        return res.redirect("http://localhost:5173/");
+        return res.redirect("https://todo-frontend-two-phi.vercel.app/");
       }
 
       const user = req.user as any;
 
       const token = Authentication.generateToken(user.id, user.username);
 
-      return res.redirect(`http://localhost:5173/login-success?token=${token}`);
+      return res.redirect(
+        `https://todo-frontend-two-phi.vercel.app/login-success?token=${token}`
+      );
     } catch (err) {
       console.error("login google error:", err);
-      return res.redirect("http://localhost:5173/");
+      return res.redirect("https://todo-frontend-two-phi.vercel.app/");
     }
   };
 
