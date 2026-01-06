@@ -8,7 +8,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      callbackURL: "http://localhost:8000/api/auth/google/callback",
+      callbackURL: "https://todo-backend-production-4634.up.railway.app/api/auth/google/callback",
       passReqToCallback: true,
     },
     async (
