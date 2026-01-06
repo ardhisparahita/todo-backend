@@ -61,7 +61,7 @@ class CategoryController implements IController {
     );
 
     if (!updated) {
-      return res.status(404).json({ message: "Category not found0" });
+      return res.status(404).json({ message: "Category not found" });
     }
 
     const category = await db.Category.findOne({ where: { id, userId } });
@@ -73,7 +73,6 @@ class CategoryController implements IController {
   }
 
   async show(req: Request, res: Response): Promise<Response> {
-    // console.log(">>> CategoryController.show called, params:", req.params);
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -84,7 +83,7 @@ class CategoryController implements IController {
     const category = await db.Category.findOne({ where: { id, userId } });
 
     if (!category) {
-      return res.status(404).json({ message: "Category not found1" });
+      return res.status(404).json({ message: "Category not found" });
     }
 
     return res.status(200).json({
@@ -104,7 +103,7 @@ class CategoryController implements IController {
     const deleted = await db.Category.destroy({ where: { id, userId } });
 
     if (!deleted) {
-      return res.status(404).json({ message: "Category not found2" });
+      return res.status(404).json({ message: "Category not found" });
     }
 
     return res.status(200).json({

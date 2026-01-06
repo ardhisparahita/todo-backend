@@ -81,6 +81,7 @@ class TaskController implements IController {
       { title, description, categoryId, dueDate, status },
       { where: { id, userId: req.user.id } }
     );
+    console.log(updated);
 
     if (!updated) {
       return res.status(404).json({ message: "Task not found" });

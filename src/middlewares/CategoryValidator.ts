@@ -1,22 +1,26 @@
 import { Request, Response, NextFunction } from "express";
-import { z } from 'zod'
+import { z } from "zod";
 
 const categorySchema = z.object({
   name: z
-  .string({message: "nama category harus string!"})
-  .nonempty({message: "nama category tidak boleh kosong"})
-  .min(2, {message: "nama category minimal 1 huruf"})
-})
+    .string({ message: "nama category harus string!" })
+    .nonempty({ message: "nama category tidak boleh kosong" })
+    .min(2, { message: "nama category minimal 2 huruf" }),
+});
 
-export type CategorySchema = z.infer<typeof categorySchema>
+export type CategorySchema = z.infer<typeof categorySchema>;
 
-const ValidateCreateCategory = async (req: Request, res: Response, next: NextFunction) => {
+const ValidateCreateCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    await categorySchema.parseAsync(req.body)
-    next()
+    await categorySchema.parseAsync(req.body);
+    next();
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
 
-export { ValidateCreateCategory }
+export { ValidateCreateCategory };

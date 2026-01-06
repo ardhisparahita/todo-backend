@@ -40,7 +40,7 @@ class AuthController {
     });
 
     if (!user) {
-      return res.status(404).json({
+      return res.status(401).json({
         message: "Username or Email not found",
       });
     }
