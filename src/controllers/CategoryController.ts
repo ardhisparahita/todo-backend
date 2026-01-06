@@ -18,7 +18,7 @@ class CategoryController implements IController {
         {
           model: db.Task,
           as: "tasks",
-          attributes: ["title", "description"], // hanya field yang ingin diambil
+          attributes: ["title", "description"],
         },
       ],
     });

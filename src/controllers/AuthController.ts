@@ -1,12 +1,10 @@
 import { Request, Response } from "express";
 const db = require("./../db/models");
 import Authentication from "../utils/Authentication";
-import { Op, where } from "sequelize";
+import { Op } from "sequelize";
 import { RegisterUserSchema } from "./../middlewares/AuthValidator";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { authenticate } from "passport";
-import { password } from "bun";
+import { OAuth2Client } from "google-auth-library";
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 class AuthController {
   register = async (
@@ -28,14 +26,13 @@ class AuthController {
     return res.status(201).json({
       message: "Register Success",
       data: user,
-      accessToken, // kirim token ke frontend
+      accessToken,
     });
   };
 
   login = async (req: Request, res: Response): Promise<Response> => {
     const { usernameOrEmail, password } = req.body;
 
-    // Gunakan satu query dengan kondisi OR untuk mencari berdasarkan username atau email
     const user = await db.User.findOne({
       where: {
         [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
@@ -53,7 +50,6 @@ class AuthController {
       user.password
     );
     if (compare) {
-      // Perbaiki: gunakan user.username bukan user.name (karena field di database adalah username)
       const token = Authentication.generateToken(user.id, user.username);
       return res.status(200).json({
         messages: "login success",
@@ -75,7 +71,6 @@ class AuthController {
 
       const token = Authentication.generateToken(user.id, user.username);
 
-      // ✅ LANGSUNG REDIRECT KE HOME
       return res.redirect(`http://localhost:5173/login-success?token=${token}`);
     } catch (err) {
       console.error("login google error:", err);
@@ -90,6 +85,75 @@ class AuthController {
     return res.status(401).json({
       message: "login google failed",
     });
+  };
+
+  loginGoogleViaToken = async (req: Request, res: Response) => {
+    try {
+      const { idToken } = req.body;
+
+      if (!idToken) {
+        return res.status(400).json({ message: "idToken is required" });
+      }
+
+      const ticket = await client.verifyIdToken({
+        idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+
+      const payload = ticket.getPayload();
+      if (!payload) {
+        return res.status(400).json({ message: "invalid token payload" });
+      }
+
+      const email = payload.email;
+      const googleId = payload.sub;
+      const displayName = payload.name;
+
+      let user = await db.User.findOne({
+        where: {
+          [Op.or]: [{ googleId }, { email }],
+        },
+      });
+
+      if (!user) {
+        user = await db.User.create({
+          username: displayName,
+          email,
+          googleId,
+          provider: "google",
+          password: null,
+        });
+      } else if (!user.googleId) {
+        await db.User.update(
+          {
+            googleId,
+            provider: "google",
+          },
+          {
+            where: { id: user.id },
+          }
+        );
+        user = await db.User.findByPk(user.id);
+      }
+
+      const token = Authentication.generateToken(user.id, user.username);
+
+      return res.status(200).json({
+        message: "login success",
+        token,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+        },
+      });
+    } catch (err) {
+      console.error("Login via token error:", err);
+      return res.status(401).json({
+        message: "invalid google token or verification failed",
+        error: err,
+      });
+    }
   };
 }
 

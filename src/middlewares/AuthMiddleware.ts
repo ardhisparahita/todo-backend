@@ -8,7 +8,6 @@ export interface AuthPayload extends JwtPayload {
   email?: string;
 }
 
-// Extend Express types
 declare global {
   namespace Express {
     interface User extends AuthPayload {}
@@ -38,7 +37,7 @@ export const Auth = (req: Request, res: Response, next: NextFunction) => {
 
     const payload = jwt.verify(token, secret) as AuthPayload;
 
-    req.user = payload; // simpan ke req
+    req.user = payload;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });

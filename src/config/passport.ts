@@ -33,13 +33,10 @@ passport.use(
             password: null,
           });
         } else if (!user.googleId) {
-          // gunakan update langsung supaya aman
           await db.User.update(
             { googleId: profile.id, provider: "google" },
             { where: { id: user.id } }
           );
-
-          // jika perlu, refresh instance
           user = await db.User.findByPk(user.id);
         }
 

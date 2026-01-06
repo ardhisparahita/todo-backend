@@ -31,11 +31,12 @@ module.exports = (sequelize, DataTypes) => {
     provider: {
       type: DataTypes.STRING,
       defaultValue: "local",
-},
+    },
 
   }, {
     sequelize,
-    modelName: 'User',   // <- singular
+    modelName: 'User',
+    tableName: 'users', 
   });
 
   return User;

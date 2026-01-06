@@ -28,6 +28,11 @@ class AuthRoutes extends BaseRoute {
       CatchAsync(AuthController.loginGoogle)
     );
     this.router.get("/google/failure", AuthController.loginGoogleFailure);
+
+    this.router.post(
+      "/google/api",
+      CatchAsync(AuthController.loginGoogleViaToken)
+    );
   }
 }
 

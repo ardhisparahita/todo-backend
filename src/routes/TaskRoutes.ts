@@ -8,7 +8,6 @@ import { ValidateUpdateStatus } from "../middlewares/TaskUpdateStatusValidator";
 
 class TodoRoutes extends BaseRoute {
   public routes(): void {
-    // Middleware untuk parsing :categoryId
     this.router.param("categoryId", categoryParams);
 
     // TASK ROUTES
@@ -53,5 +52,4 @@ class TodoRoutes extends BaseRoute {
   }
 }
 
-// Export router siap pakai
 export default new TodoRoutes().router;

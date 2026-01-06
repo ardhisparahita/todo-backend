@@ -16,7 +16,7 @@ class TaskController implements IController {
         {
           model: db.Category,
           as: "category",
-          attributes: ["id", "name"], // << ambil id + nama category
+          attributes: ["id", "name"],
         },
       ],
       attributes: ["id", "title", "description", "status", "categoryId"],
@@ -36,7 +36,6 @@ class TaskController implements IController {
     const { title, description } = req.body;
     const categoryId = req.category!.id;
 
-    // Pastikan category ada
     const category = await db.Category.findOne({
       where: { id: categoryId },
     });
@@ -45,7 +44,6 @@ class TaskController implements IController {
       return res.status(400).json({ message: "Category does not exist." });
     }
 
-    // Create task
     const task = await db.Task.create({
       name: req.category?.name,
       title,
@@ -55,12 +53,11 @@ class TaskController implements IController {
       userId: req.user.id,
     });
 
-    // Reload task dengan include category
     await task.reload({
       include: [
         {
           model: db.Category,
-          as: "category", // alias harus sama dengan model Task
+          as: "category",
           attributes: ["id", "name"],
         },
       ],
@@ -108,12 +105,10 @@ class TaskController implements IController {
     const { categoryId, id } = req.params;
     const { status } = req.body;
 
-    // Validasi input status
     if (!status) {
       return res.status(400).json({ message: "Status is required" });
     }
 
-    // Cari task berdasarkan user, category, dan id
     const task = await db.Task.findOne({
       where: {
         id,
@@ -124,7 +119,7 @@ class TaskController implements IController {
         {
           model: db.Category,
           as: "category",
-          attributes: ["id", "name"], // ambil nama category
+          attributes: ["id", "name"],
         },
       ],
     });
@@ -133,7 +128,6 @@ class TaskController implements IController {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    // Update status
     task.status = status;
     await task.save();
 
