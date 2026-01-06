@@ -1,3 +1,4 @@
+require("dotenv").config();
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -16,7 +17,7 @@ class Authentication {
 
   public static generateToken = (id: number, name: string): string => {
     const secretKey: any = process.env.JWT_SECRET_KEY;
-
+    console.log("Nilai Secret Key:", process.env.JWT_SECRET);
     const token: string = jwt.sign({ id, name }, secretKey, {
       expiresIn: "1h",
     });
